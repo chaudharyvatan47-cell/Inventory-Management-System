@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Inventory Manager{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Dashboard</h1>
+        <p>Overview of your current inventory.</p>
+    </div>
+    <a class="button" href="{{ url_for('add_product') }}">+ Add Product</a>
+</div>
+
+<div class="stats">
+    <div class="stat-card">
+        <span>Total Products</span>
+        <strong>{{ total_products }}</strong>
+    </div>
+    <div class="stat-card">
+        <span>Total Available Stock</span>
+        <strong>{{ total_stock }}</strong>
+    </div>
+    <div class="stat-card warning-card">
+        <span>Low Stock Products</span>
+        <strong>{{ low_stock_count }}</strong>
+    </div>
+</div>
+
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2>Low Stock</h2>
+            <p>Products with quantity below 5.</p>
+        </div>
+        <a href="{{ url_for('products_page') }}">View all</a>
+    </div>
+
+    {% if low_stock_products %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in low_stock_products %}
+                    <tr class="low-stock">
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.category }}</td>
+                        <td>₹{{ "%.2f"|format(product.price) }}</td>
+                        <td><span class="badge danger">{{ product.quantity }} left</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty">No low-stock products right now.</div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Add Product - Inventory Manager{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <div class="page-header">
+        <div>
+            <h1>Add Product</h1>
+            <p>Add a new product to your inventory.</p>
+        </div>
+    </div>
+
+    <form class="form-card" method="POST">
+        <label for="name">Product Name</label>
+        <input id="name" name="name" type="text" value="{{ request.form.get('name', '') }}" required>
+
+        <label for="category">Category</label>
+        <input id="category" name="category" type="text" value="{{ request.form.get('category', '') }}" required>
+
+        <label for="price">Price (₹)</label>
+        <input id="price" name="price" type="number" step="0.01" min="0" value="{{ request.form.get('price', '') }}" required>
+
+        <label for="quantity">Quantity</label>
+        <input id="quantity" name="quantity" type="number" min="0" value="{{ request.form.get('quantity', '0') }}" required>
+
+        <div class="form-actions">
+            <button class="button" type="submit">Add Product</button>
+            <a class="button secondary" href="{{ url_for('products_page') }}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Products - Inventory Manager{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Products</h1>
+        <p>Manage products and stock.</p>
+    </div>
+    <a class="button" href="{{ url_for('add_product') }}">+ Add Product</a>
+</div>
+
+<form class="search-bar" method="GET" action="{{ url_for('products_page') }}">
+    <input type="search" name="search" value="{{ search }}" placeholder="Search product by name...">
+    <button class="button" type="submit">Search</button>
+    {% if search %}
+        <a class="button secondary" href="{{ url_for('products_page') }}">Clear</a>
+    {% endif %}
+</form>
+
+<section class="panel">
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr class="{% if product.quantity < 5 %}low-stock{% endif %}">
+                    <td>#{{ product.id }}</td>
+                    <td><strong>{{ product.name }}</strong></td>
+                    <td>{{ product.category }}</td>
+                    <td>₹{{ "%.2f"|format(product.price) }}</td>
+                    <td>
+                        {% if product.quantity < 5 %}
+                            <span class="badge danger">{{ product.quantity }} low</span>
+                        {% else %}
+                            <span class="badge">{{ product.quantity }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ product.created_date }}</td>
+                    <td>
+                        <div class="actions">
+                            <a class="small-button" href="{{ url_for('edit_product', product_id=product.id) }}">Edit</a>
+
+                            <form method="POST" action="{{ url_for('delete_product', product_id=product.id) }}" onsubmit="return confirmDelete()">
+                                <button class="small-button danger-button" type="submit">Delete</button>
+                            </form>
+
+                            <form class="stock-form" method="POST" action="{{ url_for('add_stock', product_id=product.id) }}">
+                                <input type="number" name="amount" min="1" placeholder="Qty" required>
+                                <button class="small-button" type="submit">+ Stock</button>
+                            </form>
+
+                            <form class="stock-form" method="POST" action="{{ url_for('remove_stock', product_id=product.id) }}">
+                                <input type="number" name="amount" min="1" max="{{ product.quantity }}" placeholder="Qty" required>
+                                <button class="small-button" type="submit">- Stock</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="empty">No products found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
